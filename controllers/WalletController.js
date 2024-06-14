@@ -85,6 +85,48 @@ exports.transfer = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+// exports.linkAccount = async (req, res) =>{
+//   const { accountNumber, bankCode, accountName } = req.body;
+//   const userId = req.user.id;
+//
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+//
+//     user.bankAccount = { accountNumber, bankCode, accountName };
+//     await user.save();
+//     res.status(200).json({ message: `Bank account linked successfully to ${accountName}` });
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send('Server error');
+//   }
+// };
+
+exports.linkAccount = (req, res) => {
+  const { accountNumber, bankCode, accountName } = req.body;
+  const userId = req.user.id;
+
+  User.findById(userId)
+      .then(user => {
+        if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.bankAccount = { accountNumber, bankCode, accountName };
+
+        return user.save();
+      })
+      .then(() => {
+        res.status(200).json({ message: `Bank account linked successfully to ${accountName}` });
+      })
+      .catch(err => {
+        console.error(err.message);
+        res.status(500).send('Server error');
+      });
+};
+
 
 exports.withdraw = async (req, res) => {
   console.log("i got here")
@@ -161,22 +203,5 @@ exports.withdraw = async (req, res) => {
     res.status(500).send('Server error');
   }
 
-  exports.linkAccount = async (req, res) =>{
-    const { accountNumber, bankCode, accountName } = req.body;
-    const userId = req.user.id;
-  
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      user.bankAccount = { accountNumber, bankCode, accountName };
-      await user.save();
-      res.status(200).json({ message: 'Bank account linked successfully' });
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
-  }
+
 };

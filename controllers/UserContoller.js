@@ -24,7 +24,14 @@ exports.register = async (req, res) => {
     });
 
     await user.save();
-    res.status(201).json({ message: 'User created successfully' });
+    const userResponse = {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    res.status(201).json({ message: 'User created successfully' , userResponse});
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
